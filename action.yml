@@ -12,13 +12,19 @@ inputs:
   url:
     required: false
   dry-run:
-    default: true
+    required: false
+    default: 'true'
+  days:
+    required: false
+    default: '0'
 
 runs:
-  using: "composite"
-  steps:
-    - name: "Get releases"
-      run: |
-        wget ${{ inputs.package }}/${{ inputs.package }}/json
-        python -c "import json; with open('json', 'r') as json_file: j = json.load(json_file);"
-    - run: pypi-cleanup --username ${{ inputs.user }} --package ${{ inputs.package}}
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.user }}
+    - ${{ inputs.password }}
+    - ${{ inputs.package }}
+    - ${{ inputs.url }}
+    - ${{ inputs.dry-run }}
+    - ${{ inputs.days }}
